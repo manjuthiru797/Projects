@@ -1,0 +1,68 @@
+// IoT-based Smart Agriculture Monitoring System
+
+
+#include <WiFi.h>
+#include <ThingSpeak.h>
+#include <DHT.h>
+
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+const char* apiKey = "W404OQ7ZMJV3VFQ4";
+const int myChannelNumber = 2991769; // Replace with your channel ID
+
+WiFiClient client;
+
+const int soilMoisturePin = 34; // Analog pin for soil moisture sensor
+const int dhtPin = 4; // Pin for DHT22 sensor
+DHT dht(dhtPin, DHT22);
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
+  Serial.println("Initializing DHT sensor...");
+  dht.begin();
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  // Read sensor data
+  int soilMoisture = analogRead(soilMoisturePin);
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Display sensor values in Serial Monitor
+  Serial.print("Soil Moisture: ");
+  Serial.print(soilMoisture);
+  Serial.println(" (Raw Analog Value)");
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" *C");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+
+  // Send data to ThingSpeak
+  ThingSpeak.setField(1, soilMoisture);
+  ThingSpeak.setField(2, temperature);
+  ThingSpeak.setField(3, humidity);
+  int response = ThingSpeak.writeFields(myChannelNumber, apiKey);
+
+  if (response == 200) {
+    Serial.println("Data sent to ThingSpeak successfully!");
+  } else {
+    Serial.println("Error sending data to ThingSpeak");
+  }
+
+  Serial.println("-------------------------------");
+  delay(15000); // Update every 15 seconds
+}
+
+
+
+
+//*For soil moisture sensor go for the paid wokwi and get the allowance for the code 

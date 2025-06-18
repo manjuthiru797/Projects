@@ -1,0 +1,90 @@
+//Code for the Water level monitoring system
+
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// LCD setup
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Ultrasonic Sensor Pins
+const int trigPin = 9;
+const int echoPin = 8;
+
+// RGB LED Pins
+const int redPin = 11;
+const int greenPin =12;
+const int bluePin =13;
+
+// Buzzer
+const int buzzer = 9;
+
+// Tank Height in cm
+const int tankHeight = 30;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+
+  pinMode(buzzer, OUTPUT);
+
+  lcd.init();
+  lcd.backlight();
+  Serial.begin(9600);
+}
+
+void loop() {
+  long duration;
+  int distance;
+
+  // Trigger ultrasonic pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Measure echo time and convert to distance
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  int waterLevel = tankHeight - distance;
+
+  // Display level on LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Water Level:");
+  lcd.setCursor(0, 1);
+  lcd.print(waterLevel);
+  lcd.print(" cm");
+
+  // RGB Color Logic based on water level
+  if (waterLevel >= 25) {
+    // High Level → RED + buzzer ON
+    setRGB(255, 0, 0);
+    digitalWrite(buzzer, HIGH);
+    
+  } 
+ else if (waterLevel >= 10) {
+    // Low Level → GREEN
+    setRGB(0, 255, 0);
+    digitalWrite(buzzer, LOW);
+  }
+ else {
+    // Very Low (empty) → BLUE + buzzer ON
+    setRGB(0, 0, 255);
+    digitalWrite(buzzer, HIGH);
+  }
+
+  delay(1000);
+}
+
+// Function to set RGB color
+void setRGB(int r, int g, int b) {
+  digitalWrite(redPin, r);
+  digitalWrite(greenPin, g);
+  digitalWrite(bluePin, b);
+}
