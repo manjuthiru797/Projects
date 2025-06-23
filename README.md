@@ -17,3 +17,11 @@ The Smart Parking System using ESP32 is designed to monitor the availability of 
 #Automatic passenger Count
 
 As a part of MINI project we did The Automatic Passenger Counting System using ESP8266 is a smart solution that uses IR sensors to detect and count people entering and exiting a vehicle or room. By placing two IR sensor pairs at the entrance, the system can distinguish between incoming and outgoing movement based on the sequence of sensor activation. The ESP8266 microcontroller processes this data and maintains a real-time passenger count. This count can be displayed on an  LCD, and also uploaded to website for remote monitoring. Such systems are especially useful in buses, trains, or smart buildings to manage crowd levels efficiently.
+
+#Password Door Locking System
+
+The Password Door Locking System is a secure access control mechanism that uses a keypad to enter a secret code for unlocking a door. When the correct password is entered, a servo motor rotates to unlock the door; otherwise, a buzzer alerts about the wrong attempt. The system typically uses an Arduino or ESP32,but here i used ESP32 . A 4x4 keypad, a servo motor, and an LCD  for user interaction. This project helps in understanding embedded system concepts like input scanning, output control, and basic security logic. It is ideal for applications like home automation, lockers, or lab door security.
+
+#smart bridge 
+
+The Smart Bridge for Floods is a simple yet effective project where the height of the bridge is increased to allow safer water flow during floods. Along with the structural change, sensors are used to monitor water levels and ensure that even with rising water, the bridge remains accessible. The  Arduino helps process sensor data and trigger alerts when necessary. This project combines a basic engineering modification with smart monitoring for improved flood resilience.It prevents the road from critical damages and no stoppage of transportation.
