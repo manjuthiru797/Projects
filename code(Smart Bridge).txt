@@ -1,0 +1,39 @@
+#include <Servo.h>
+
+Servo leftBridgeServo;
+Servo rightBridgeServo;
+
+const int sensorPin = 7;      // Soil sensor digital output
+const int leftServoPin = 9;   // Left servo motor signal pin
+const int rightServoPin = 8;  // Right servo motor signal pin
+// Optional: const int ledPin = 6;  // LED to indicate flood
+
+void setup() {
+  pinMode(sensorPin, INPUT);
+  // Optional: pinMode(ledPin, OUTPUT);
+
+  leftBridgeServo.attach(leftServoPin);
+  rightBridgeServo.attach(rightServoPin);
+
+  // Start with the bridge lowered
+  leftBridgeServo.write(0);
+  rightBridgeServo.write(0);
+}
+
+void loop() {
+  int val = digitalRead(sensorPin);
+
+  if (val == HIGH) {
+    // No flood – lower both sides of the bridge
+    leftBridgeServo.write(90);
+    rightBridgeServo.write(90);
+    // Optional: digitalWrite(ledPin, LOW);
+  } else {
+    // Flood detected – raise both sides of the bridge
+    leftBridgeServo.write(0);   // Adjust angle as needed
+    rightBridgeServo.write(0);  // Adjust angle as needed
+    // Optional: digitalWrite(ledPin, HIGH);
+  }
+
+  delay(500); // Delay to avoid jitter
+}
