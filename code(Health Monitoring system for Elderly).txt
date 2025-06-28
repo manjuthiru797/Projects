@@ -1,0 +1,124 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ThingSpeak.h>
+#include <DHT.h>
+#include <Wire.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <math.h>
+
+// WiFi credentials
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+// ThingSpeak channel details
+unsigned long myChannelNumber = 2996453; // Replace with your actual channel ID
+const char* myWriteAPIKey = "OV56QSABR7A4C7HX";
+
+WiFiClient client;
+
+// Sensor Pins
+#define DHTPIN 25
+#define DHTTYPE DHT22
+#define PULSE_PIN 35 // Pulse sensor analog pin
+
+// Sensor objects
+DHT dht(DHTPIN, DHTTYPE);
+Adafruit_MPU6050 mpu;
+
+// Pulse detection variables
+int pulseValue = 0;
+int threshold = 550; // Adjust this threshold as per real sensor
+unsigned long lastBeatTime = 0;
+int bpm = 0;
+int beatCount = 0;
+unsigned long startTime = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected to WiFi");
+
+  // Initialize I2C for MPU6050
+  Wire.begin(21, 22); // SDA = 21, SCL = 22
+
+  // Initialize sensors
+  dht.begin();
+  if (!mpu.begin()) {
+    Serial.println("MPU6050 not found!");
+    while (1); // Stop execution if MPU not found
+  }
+
+  // Initialize ThingSpeak
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  // Read temperature and humidity
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Read MPU6050 acceleration
+  sensors_event_t a, g, tempSensor;
+  mpu.getEvent(&a, &g, &tempSensor);
+
+  // Calculate acceleration magnitude
+  float accel = sqrt(a.acceleration.x * a.acceleration.x +
+                     a.acceleration.y * a.acceleration.y +
+                     a.acceleration.z * a.acceleration.z);
+
+  // Read pulse sensor value
+  pulseValue = analogRead(PULSE_PIN);
+  unsigned long currentTime = millis();
+
+  if (pulseValue > threshold && (currentTime - lastBeatTime) > 300) {
+    lastBeatTime = currentTime;
+    beatCount++;
+
+    if (beatCount == 1) {
+      startTime = currentTime;
+    } else if (beatCount == 10) {
+      unsigned long elapsed = currentTime - startTime;
+      bpm = 600000 / elapsed;
+      beatCount = 0;
+    }
+  }
+
+  // Reset BPM if no beats detected for 5 seconds
+  if ((currentTime - lastBeatTime) > 5000) {
+    bpm = 0;
+  }
+
+  // Print data to Serial Monitor
+  Serial.print("Temperature: "); Serial.print(temperature); Serial.println(" °C");
+  Serial.print("Humidity: "); Serial.print(humidity); Serial.println(" %");
+  Serial.print("Pulse Value: "); 
+  Serial.println(pulseValue);
+  Serial.print("Acceleration: ");
+   Serial.println(accel);
+
+  // Upload to ThingSpeak
+  ThingSpeak.setField(2, temperature);
+  ThingSpeak.setField(3, humidity);
+  ThingSpeak.setField(1, pulseValue);
+  ThingSpeak.setField(4, accel);
+
+  int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+
+  if (x == 200) {
+    Serial.println("Data sent to ThingSpeak successfully.");
+  } else {
+    Serial.print("Error sending data. HTTP code: ");
+    Serial.println(x);
+  }
+
+  Serial.println("------------------------------------");
+  delay(15000); // Wait 15 seconds
+}
