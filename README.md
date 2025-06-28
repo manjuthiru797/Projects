@@ -1,5 +1,5 @@
 # Projects
-To get more skills and to know the technology one must have to do projects either it is small or big we must have to do
+Just understanding how sensor works
 
 
 #water level monitoring
@@ -25,3 +25,8 @@ The Password Door Locking System is a secure access control mechanism that uses 
 #smart bridge 
 
 The Smart Bridge for Floods is a simple yet effective project where the height of the bridge is increased to allow safer water flow during floods. Along with the structural change, sensors are used to monitor water levels and ensure that even with rising water, the bridge remains accessible. The  Arduino helps process sensor data and trigger alerts when necessary. This project combines a basic engineering modification with smart monitoring for improved flood resilience.It prevents the road from critical damages and no stoppage of transportation.
+
+
+#Health Monitoring System for Elderly
+A Health Monitoring System for elderly people is a smart IoT-based solution designed to track vital health parameters like body temperature, heart rate, humidity, and motion or fall detection in real-time. Using sensors like DHT22 for temperature and humidity, Pulse Sensor for heart rate, and MPU6050 accelerometer for detecting sudden movements or falls, the system collects data and transmits it via Wi-Fi using an ESP32 microcontroller. The data is sent to cloud platforms like ThingSpeak for continuous monitoring, and alerts can be configured to notify caregivers or family members in emergencies. This project ensures early health risk detection and provides peace of mind, especially for seniors living alone.
+
