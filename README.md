@@ -28,5 +28,6 @@ The Smart Bridge for Floods is a simple yet effective project where the height o
 
 
 #Health Monitoring System for Elderly
+
 A Health Monitoring System for elderly people is a smart IoT-based solution designed to track vital health parameters like body temperature, heart rate, humidity, and motion or fall detection in real-time. Using sensors like DHT22 for temperature and humidity, Pulse Sensor for heart rate, and MPU6050 accelerometer for detecting sudden movements or falls, the system collects data and transmits it via Wi-Fi using an ESP32 microcontroller. The data is sent to cloud platforms like ThingSpeak for continuous monitoring, and alerts can be configured to notify caregivers or family members in emergencies. This project ensures early health risk detection and provides peace of mind, especially for seniors living alone.
 
